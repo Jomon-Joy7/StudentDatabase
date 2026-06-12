@@ -1,5 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "Student.h"
+
 using namespace std;
 
 int main()
@@ -37,44 +40,42 @@ int main()
 		}
 		case 2:
 		{
-			//...........
-			//...........
+			searchByCourse(students, count);
 			break;
 		}
 		case 3:
 		{
-			//...........
-			//...........
+			showAssignmentAverage(students, count);
 			break;
 		}
 		case 4:
 		{
-			//...........
-			//...........
+			showHardestAssignment(students, count);
 			break;
 		}
 		case 5:
 		{
-			//...........
-			//...........
+			courseEnrollment(students, count);
+
 			break;
 		}
 		case 6:
 		{
-			//...........
-			//...........
+			sortByAverage(students, count);
+			displayStudents(students, count);
 			break;
 		}
 		case 7:
 		{
-			//...........
-			//...........
+			addStudent(students, count);
+			saveStudents(students, count);
+			loadStudents(students, count);
+			displayStudents(students, count); 
 			break;
 		}
 		case 8:
 		{
-			//...........
-			//...........
+			atRiskStudents(students, count);
 			break;
 		}
 		default:
