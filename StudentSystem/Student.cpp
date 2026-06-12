@@ -1,48 +1,62 @@
 #include "Student.h"
-
-// ================= LOAD =================
-// Reads student text file data into the array until full
 void loadStudents(Student students[], int& count)
 {
-    ifstream inputFile("students.txt");
+    ifstream input("Students90.txt");
 
-    while (count < MAX_STUDENTS &&
-        inputFile >> students[count].firstName
-        >> students[count].lastName
-        >> students[count].id
-        >> students[count].grade)
+    count = 0;
+
+    while (count < STUDENT_MAX)
     {
+        input >> students[count].firstName
+            >> students[count].lastName
+            >> students[count].id;
+
+        if (input.fail())
+            break;
+
+        for (int i = 0; i < NUM_ASSIGNMENTS; i++)
+        {
+            input >> students[count].assignments[i];
+        }
+
+        input >> students[count].average;
+
+        for (int i = 0; i < NUM_COURSES; i++)
+        {
+            input >> students[count].courses[i];
+        }
+
         count++;
     }
 
-    inputFile.close();
+    input.close();
 }
 
-// ================= DISPLAY ALL STUDENT INFO =================
-// Prints headers and loops through arrays to display all records and grades
-void displayAllStudentInfo(double grades[][NUM_ASSIGNMENTS], Student students[], int count)
+// ================= DISPLAY =================
+void displayStudents(Student students[], int count)
 {
-    cout << "\n===== ALL STUDENT RECORDS =====\n";
-    cout << "\033[31m" << "ID\tFName\t\tLName\t\t";
+    cout << "\nID\tLName\t\tFName\t\t";
 
     for (int j = 0; j < NUM_ASSIGNMENTS; j++)
-    {
-        cout << "A" << (j + 1) << "\t";
-    }
-    cout << "AVG \033[0m\n";
+        cout << "A" << j + 1 << "\t";
+
+    cout << "AVG\tC1\tC2\tC3\n";
 
     for (int i = 0; i < count; i++)
     {
         cout << students[i].id << "\t"
-            << students[i].firstName << "      \t"
-            << students[i].lastName << "      \t";
+            << students[i].lastName << "      \t"
+            << students[i].firstName << "      \t";
 
         for (int j = 0; j < NUM_ASSIGNMENTS; j++)
-        {
-            cout << grades[i][j] << "\t";
-        }
+            cout << students[i].assignments[j] << "\t";
 
-        cout << students[i].grade << endl;
+        cout << students[i].average << "\t";
+
+        for (int j = 0; j < NUM_COURSES; j++)
+            cout << students[i].courses[j] << "\t";
+
+        cout << endl;
     }
 }
 
