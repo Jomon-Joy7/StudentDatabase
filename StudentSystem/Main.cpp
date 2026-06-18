@@ -7,11 +7,10 @@ using namespace std;
 
 int main()
 {
-	Student students[STUDENT_MAX];
-	int count = 0;
+	StudentNode* head = nullptr;
 
-	loadStudents(students, count);
-	calculateAllAverages(students, count);
+	loadStudents(head);
+	calculateAllAverages(head);
 
 	int choice;
 
