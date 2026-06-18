@@ -3,73 +3,75 @@
 #include <fstream>
 #include <iomanip>
 
-
 using namespace std;
+
 //=========LOAD STUDENT=============
-void loadStudents(Student students[], int& count)
+void loadStudents(StudentNode*& head)
 {
-    ifstream input("Students90.txt");
+    ifstream file("Students90.txt");
 
-    if (!input)
+    Student tempStudent;
+
+    while (file >> tempStudent.firstName
+        >> tempStudent.lastName
+        >> tempStudent.id)
     {
-        cout << "Error opening file!" << endl;
-        return;
+        for (int j = 0; j < NUM_ASSIGNMENTS; j++)
+            file >> tempStudent.assignments[j];
+
+        file >> tempStudent.average;
+
+        for (int j = 0; j < NUM_COURSES; j++)
+            file >> tempStudent.courses[j];
+
+        StudentNode* newNode = new StudentNode();
+
+        newNode->data = tempStudent;
+
+        newNode->next = head;
+
+        head = newNode;
     }
 
-    count = 0;
-
-    while (count < STUDENT_MAX)
-    {
-        input >> students[count].firstName
-            >> students[count].lastName
-            >> students[count].id;
-
-        if (input.fail())
-            break;
-
-        for (int i = 0; i < NUM_ASSIGNMENTS; i++)
-        {
-            input >> students[count].assignments[i];
-        }
-
-        input >> students[count].average;
-
-        for (int i = 0; i < NUM_COURSES; i++)
-        {
-            input >> students[count].courses[i];
-        }
-
-        count++;
-    }
-
-    input.close();
+    file.close();
 }
 
 // ================= DISPLAY =================
-void displayStudents(Student students[], int count)
+void displayStudents(StudentNode* head)
 {
-    cout << "\nID\tLName\t\tFName\t\t";
+    cout << "\n"
+        << setw(8) << "ID"
+        << setw(15) << "LName"
+        << setw(15) << "FName";
 
     for (int j = 0; j < NUM_ASSIGNMENTS; j++)
-        cout << "A" << j + 1 << "\t";
+        cout << setw(6) << ("A" + to_string(j + 1));
 
-    cout << "AVG\tC1\tC2\tC3\n";
+    cout << setw(8) << "AVG"
+        << setw(10) << "C1"
+        << setw(10) << "C2"
+        << setw(10) << "C3"
+        << endl;
 
-    for (int i = 0; i < count; i++)
+    StudentNode* current = head;
+
+    while (current != nullptr)
     {
-        cout << students[i].id << "\t"
-            << students[i].lastName << "      \t"
-            << students[i].firstName << "      \t";
+        cout << setw(8) << current->data.id
+            << setw(15) << current->data.lastName
+            << setw(15) << current->data.firstName;
 
         for (int j = 0; j < NUM_ASSIGNMENTS; j++)
-            cout << students[i].assignments[j] << "\t";
+            cout << setw(6) << current->data.assignments[j];
 
-        cout << students[i].average << "\t";
+        cout << setw(8) << current->data.average;
 
         for (int j = 0; j < NUM_COURSES; j++)
-            cout << students[i].courses[j] << "\t";
+            cout << setw(10) << current->data.courses[j];
 
         cout << endl;
+
+        current = current->next;
     }
 }
 
