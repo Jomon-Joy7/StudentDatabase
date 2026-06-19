@@ -3,9 +3,11 @@
 #include <fstream>
 #include <iomanip>
 
+
 using namespace std;
 
-//=========LOAD STUDENT=============
+//=========LOAD STUDENT============
+
 void loadStudents(StudentNode*& head)
 {
     ifstream file("Students90.txt");
@@ -25,7 +27,7 @@ void loadStudents(StudentNode*& head)
             file >> tempStudent.courses[j];
 
         StudentNode* newNode = new StudentNode();
-
+        
         newNode->data = tempStudent;
 
         newNode->next = head;
@@ -37,6 +39,7 @@ void loadStudents(StudentNode*& head)
 }
 
 // ================= DISPLAY =================
+
 void displayStudents(StudentNode* head)
 {
     cout << "\n"
@@ -77,39 +80,48 @@ void displayStudents(StudentNode* head)
 
 
 //===========SEARCH BY COURSE================
-void searchByCourse(Student students[], int count)
+void searchByCourse(StudentNode* head)
 {
     string course;
 
     cout << "Enter Course: ";
     cin >> course;
 
-    for (int i = 0; i < count; i++)
+    StudentNode* current = head;
+
+    while (current != nullptr)
     {
         for (int j = 0; j < NUM_COURSES; j++)
         {
-            if (students[i].courses[j] == course)
+            if (current->data.courses[j] == course)
             {
-                cout << students[i].id << " "
-                    << students[i].firstName << " "
-                    << students[i].lastName << endl;
-
+                cout << current->data.id << " "
+                    << current->data.firstName << " "
+                    << current->data.lastName << endl;
                 break;
             }
         }
+
+        current = current->next;
     }
 }
 
 //============SHOW ASSIGNMENT AVERAGE=============
-void showAssignmentAverage(Student students[], int count)
+void showAssignmentAverage(StudentNode* head)
 {
     for (int a = 0; a < NUM_ASSIGNMENTS; a++)
     {
         double sum = 0;
+        int count = 0;
 
-        for (int i = 0; i < count; i++)
+        StudentNode* current = head;
+
+        while (current != nullptr)
         {
-            sum += students[i].assignments[a];
+            sum += current->data.assignments[a];
+            count++;
+
+            current = current->next;
         }
 
         cout << "A" << a + 1
@@ -120,17 +132,23 @@ void showAssignmentAverage(Student students[], int count)
 }
 
 //===========SHOW HARDEST ASSIGNMENT===========
-void showHardestAssignment(Student students[], int count)
+void showHardestAssignment(StudentNode* head)
 {
     double averages[NUM_ASSIGNMENTS];
 
     for (int a = 0; a < NUM_ASSIGNMENTS; a++)
     {
         double sum = 0;
+        int count = 0;
 
-        for (int i = 0; i < count; i++)
+        StudentNode* current = head;
+
+        while (current != nullptr)
         {
-            sum += students[i].assignments[a];
+            sum += current->data.assignments[a];
+            count++;
+
+            current = current->next;
         }
 
         averages[a] = sum / count;
@@ -154,8 +172,9 @@ void showHardestAssignment(Student students[], int count)
         << endl;
 }
 
+
 //===========COURSE ENROLLMENT==============
-void courseEnrollment(Student students[], int count)
+void courseEnrollment(StudentNode* head)
 {
     string courseList[] =
     {
@@ -172,15 +191,19 @@ void courseEnrollment(Student students[], int count)
     {
         int total = 0;
 
-        for (int i = 0; i < count; i++)
+        StudentNode* current = head;
+
+        while (current != nullptr)
         {
             for (int j = 0; j < NUM_COURSES; j++)
             {
-                if (students[i].courses[j] == courseList[c])
+                if (current->data.courses[j] == courseList[c])
                 {
                     total++;
                 }
             }
+
+            current = current->next;
         }
 
         cout << courseList[c]
@@ -191,45 +214,56 @@ void courseEnrollment(Student students[], int count)
 }
 
 //=============AT RISK STUDENTS=============
-void atRiskStudents(Student students[], int count)
+
+void atRiskStudents(StudentNode* head)
 {
-    for (int i = 0; i < count; i++)
+    StudentNode* current = head;
+
+    while (current != nullptr)
     {
         bool lowMark = false;
 
         for (int j = 0; j < NUM_ASSIGNMENTS; j++)
         {
-            if (students[i].assignments[j] < 50)
+            if (current->data.assignments[j] < 50)
             {
                 lowMark = true;
             }
         }
 
         if (lowMark &&
-            students[i].average >= 50 &&
-            students[i].average <= 59)
+            current->data.average >= 50 &&
+            current->data.average <= 59)
         {
-            cout << students[i].id << " "
-                << students[i].firstName << " "
-                << students[i].lastName << " "
-                << students[i].average
+            cout << current->data.id << " "
+                << current->data.firstName << " "
+                << current->data.lastName << " "
+                << current->data.average
                 << endl;
         }
+
+        current = current->next;
     }
 }
 
 //==========SORT BY AVERAGE===============
-void sortByAverage(Student students[], int count)
+
+void sortByAverage(StudentNode* head)
 {
-    for (int i = 0; i < count - 1; i++)
+    StudentNode* current;
+    StudentNode* nextNode;
+
+    for (current = head; current != nullptr; current = current->next)
     {
-        for (int j = i + 1; j < count; j++)
+        for (nextNode = current->next;
+            nextNode != nullptr;
+            nextNode = nextNode->next)
         {
-            if (students[j].average > students[i].average)
+            if (nextNode->data.average > current->data.average)
             {
-                Student temp = students[i];
-                students[i] = students[j];
-                students[j] = temp;
+                Student temp = current->data;
+                current->data = nextNode->data;
+                nextNode->data = temp;
             }
         }
     }
@@ -237,68 +271,67 @@ void sortByAverage(Student students[], int count)
 
 //============ADD STUDENT==========
 
-void addStudent(Student students[], int& count)
+void addStudent(StudentNode*& head)
 {
-    if (count >= STUDENT_MAX)
-    {
-        cout << "Database Full!" << endl;
-        return;
-    }
+    StudentNode* newNode = new StudentNode();
 
     cout << "First Name: ";
-    cin >> students[count].firstName;
+    cin >> newNode->data.firstName;
 
     cout << "Last Name: ";
-    cin >> students[count].lastName;
+    cin >> newNode->data.lastName;
 
     cout << "ID: ";
-    cin >> students[count].id;
+    cin >> newNode->data.id;
 
     for (int i = 0; i < NUM_ASSIGNMENTS; i++)
     {
         cout << "Assignment " << i + 1 << ": ";
-        cin >> students[count].assignments[i];
+        cin >> newNode->data.assignments[i];
     }
 
     for (int i = 0; i < NUM_COURSES; i++)
     {
         cout << "Course " << i + 1 << ": ";
-        cin >> students[count].courses[i];
+        cin >> newNode->data.courses[i];
     }
 
-    calculateAverage(&students[count]);
+    calculateAverage(&newNode->data);
 
-    count++;
+    newNode->next = head;
+    head = newNode;
 
     cout << "Student Added!" << endl;
 }
 
 //=============SAVE STUDENTS=============
-void saveStudents(Student students[], int count)
+void saveStudents(StudentNode* head)
 {
     ofstream output("Students90.txt");
 
-    for (int i = 0; i < count; i++)
-    {
-        output << students[i].firstName << " "
-            << students[i].lastName << " "
-            << students[i].id << " ";
+    StudentNode* current = head;
 
-        // assignments
+    while (current != nullptr)
+    {
+        output << current->data.firstName << " "
+            << current->data.lastName << " "
+            << current->data.id << " ";
+
         for (int j = 0; j < NUM_ASSIGNMENTS; j++)
         {
-            output << students[i].assignments[j] << " ";
+            output << current->data.assignments[j] << " ";
         }
 
-        output << students[i].average << " ";
+        output << current->data.average << " ";
 
-        // courses
         for (int j = 0; j < NUM_COURSES; j++)
         {
-            output << students[i].courses[j] << " ";
+            output << current->data.courses[j] << " ";
         }
 
         output << endl;
+
+        current = current->next;
     }
 
     output.close();
@@ -320,11 +353,27 @@ void calculateAverage(Student* s)
 }
 
 //=============CALCULATE ALL AVERAGE==========
-void calculateAllAverages(Student students[], int count)
+
+void calculateAllAverages(StudentNode* head)
 {
-    for (int i = 0; i < count; i++)
+    StudentNode* current = head;
+
+    while (current != nullptr)
     {
-        calculateAverage(&students[i]);
+        calculateAverage(&current->data);
+        current = current->next;
+    }
+}   
+
+//===============DELETE LIST=============
+void deleteList(StudentNode*& head)
+{
+    while (head != nullptr)
+    {
+        StudentNode* temp = head;
+
+        head = head->next;
+
+        delete temp;
     }
 }
-
